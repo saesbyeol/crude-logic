@@ -8,11 +8,13 @@ import OilPriceTrends from './OilPriceTrends';
 import OilPriceForecast from './OilPriceForecast';
 
 const OilPriceDashboard = () => {
-  const [currentPrice, setCurrentPrice] = useState(81.25);
-  const [previousPrice, setPreviousPrice] = useState(80.50);
-  const [highPrice, setHighPrice] = useState(82.75);
-  const [lowPrice, setLowPrice] = useState(80.10);
+  const [currentPrice, setCurrentPrice] = useState(67.07);
+  const [previousPrice, setPreviousPrice] = useState(66.24);
+  const [highPrice, setHighPrice] = useState(68.19);
+  const [lowPrice, setLowPrice] = useState(66.10);
   const [isLoading, setIsLoading] = useState(true);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1D');
   
   useEffect(() => {
     // Simulate loading data
@@ -20,122 +22,186 @@ const OilPriceDashboard = () => {
       setIsLoading(false);
     }, 1500);
     
-    return () => clearTimeout(timer);
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
   
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+  
   // Calculate price change
-  const priceChange = currentPrice - previousPrice;
-  const priceChangePercentage = (priceChange / previousPrice) * 100;
+  const priceChange = 0.83; // Fixed value to match the image
+  const priceChangePercentage = 1.25; // Fixed value to match the image
+  
+  // Simulate real-time price updates
+  useEffect(() => {
+    if (!isLoading) {
+      const interval = setInterval(() => {
+        // Random small price fluctuation
+        const fluctuation = (Math.random() - 0.5) * 0.05;
+        const newPrice = currentPrice + fluctuation;
+        setCurrentPrice(parseFloat(newPrice.toFixed(2)));
+        
+        // Update high and low if needed
+        if (newPrice > highPrice) {
+          setHighPrice(parseFloat(newPrice.toFixed(2)));
+        }
+        if (newPrice < lowPrice) {
+          setLowPrice(parseFloat(newPrice.toFixed(2)));
+        }
+      }, 5000); // Update every 5 seconds
+      
+      return () => clearInterval(interval);
+    }
+  }, [currentPrice, highPrice, lowPrice, isLoading]);
   
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
-          <h2 className="mt-4 text-xl font-semibold text-gray-700">Loading Oil Price Data...</h2>
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600 mx-auto"></div>
+          <h2 className="mt-4 text-xl font-semibold">Loading Oil Price Data...</h2>
+          <p className="mt-2 text-gray-400">Fetching the latest market information</p>
         </div>
       </div>
     );
   }
   
   return (
-    <motion.div 
-      className="min-h-screen bg-gray-50 p-6"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <header className="max-w-7xl mx-auto mb-8">
-        <motion.h1 
-          className="text-3xl md:text-4xl font-bold text-gray-900"
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          Oil Price Dashboard
-        </motion.h1>
-        <motion.p 
-          className="text-gray-500 mt-2"
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          Real-time visualization of global crude oil prices and trends
-        </motion.p>
-      </header>
+    <div className="min-h-screen">
+      {/* Initial empty space for the calendar icon */}
+      <div className="flex flex-col items-center justify-center py-12">
+        <svg className="calendar-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 4H4C2.89543 4 2 4.89543 2 6V18C2 19.1046 2.89543 20 4 20H20C21.1046 20 22 19.1046 22 18V6C22 4.89543 21.1046 4 20 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M16 2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M8 2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M2 10H22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M8 14L11 17L16 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
       
-      <main className="max-w-7xl mx-auto space-y-8">
-        {/* Stats Section */}
-        <section>
-          <OilPriceStats 
-            currentPrice={currentPrice}
-            change={priceChange}
-            changePercentage={priceChangePercentage}
-            high={highPrice}
-            low={lowPrice}
-          />
-        </section>
-        
-        {/* Chart Section */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div>
-            <motion.h2 
-              className="text-xl font-bold text-gray-900 mb-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              Recent Price Trends
-            </motion.h2>
-            <OilPriceChart />
+      {/* Main content */}
+      <div className="max-w-6xl mx-auto px-4">
+        {/* Title and timeframe buttons */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold mb-4">Crude Oil Futures · {timeframe} · MARKETSCOM</h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-baseline">
+              <span className="text-3xl font-bold mr-2">${currentPrice.toFixed(2)}</span>
+              <span className="price-up text-lg">+{priceChange.toFixed(2)} (+{priceChangePercentage.toFixed(2)}%)</span>
+            </div>
+            <div className="flex">
+              {(['1D', '1W', '1M', '3M', '1Y'] as const).map((tf) => (
+                <button
+                  key={tf}
+                  className={`time-button ${timeframe === tf ? 'active' : ''}`}
+                  onClick={() => setTimeframe(tf)}
+                >
+                  {tf}
+                </button>
+              ))}
+            </div>
           </div>
-          <div>
-            <motion.h2 
-              className="text-xl font-bold text-gray-900 mb-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              Price Forecast
-            </motion.h2>
+        </div>
+        
+        {/* Buy/Sell prices */}
+        <div className="flex items-center mb-4">
+          <div className="price-tag sell mr-4">
+            67.07
+            <span className="ml-2 text-xs">SELL</span>
+          </div>
+          <div className="price-tag buy">
+            67.12
+            <span className="ml-2 text-xs">BUY</span>
+          </div>
+          <div className="ml-auto text-sm text-gray-400">
+            Vol: <span className="text-white">1,245</span>
+          </div>
+        </div>
+        
+        {/* Chart timeframe buttons */}
+        <div className="chart-controls mb-4">
+          <button className="chart-type-button">1H</button>
+          <button className="chart-type-button">4H</button>
+          <button className="chart-type-button active">1D</button>
+          <span className="ml-4"></span>
+          <button className="chart-type-button active">N</button>
+          <button className="chart-type-button">Candle</button>
+          <button className="chart-type-button active">Vol</button>
+        </div>
+        
+        {/* Main chart */}
+        <div className="chart-container mb-8">
+          <OilPriceChart />
+        </div>
+        
+        {/* Additional data */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="chart-container">
+            <h2 className="text-lg font-bold mb-4">Price Statistics</h2>
+            <OilPriceStats 
+              currentPrice={currentPrice}
+              change={priceChange}
+              changePercentage={priceChangePercentage}
+              high={highPrice}
+              low={lowPrice}
+            />
+          </div>
+          <div className="chart-container">
+            <h2 className="text-lg font-bold mb-4">Price Forecast</h2>
             <OilPriceForecast />
           </div>
-        </section>
+        </div>
         
-        {/* Trends Section */}
-        <section>
+        {/* Trends */}
+        <div className="chart-container mb-8">
+          <h2 className="text-lg font-bold mb-4">Historical Trends</h2>
           <OilPriceTrends />
-        </section>
-        
-        {/* Additional Information */}
-        <section>
-          <motion.div 
-            className="bg-white rounded-xl shadow-lg p-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-xl font-bold text-gray-900 mb-4">About This Dashboard</h2>
-            <p className="text-gray-600 mb-4">
-              This dashboard provides a comprehensive view of global crude oil prices, including historical trends, 
-              current prices, and future forecasts. The data is updated in real-time to provide the most accurate 
-              information for decision-making and analysis.
-            </p>
-            <p className="text-gray-600">
-              The visualizations are designed to be intuitive and informative, allowing users to quickly understand 
-              the current state of the oil market and identify potential trends. The forecast models are based on 
-              historical data, market analysis, and geopolitical factors.
-            </p>
-          </motion.div>
-        </section>
-      </main>
+        </div>
+      </div>
       
-      <footer className="max-w-7xl mx-auto mt-12 pt-6 border-t border-gray-200">
-        <p className="text-center text-gray-500 text-sm">
-          © {new Date().getFullYear()} Oil Price Dashboard | Data updated in real-time
+      <footer className="navbar mt-8 py-4">
+        <p className="text-center text-sm text-gray-400">
+          © {new Date().getFullYear()} Oil Price Dashboard | Market data delayed by at least 15 minutes
         </p>
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-gray-400">Last update: {new Date().toLocaleTimeString()}</span>
+          <div className="flex items-center bg-blue-900/30 rounded-full px-2 py-0.5">
+            <div className="w-2 h-2 rounded-full bg-green-500 mr-1 animate-pulse"></div>
+            <span className="text-xs text-blue-300">Live</span>
+          </div>
+        </div>
       </footer>
-    </motion.div>
+      
+      {/* Scroll to top button */}
+      {showScrollTop && (
+        <motion.button
+          className="fixed bottom-6 right-6 bg-blue-600 text-white rounded-full p-3 shadow-lg z-50"
+          onClick={scrollToTop}
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+          </svg>
+        </motion.button>
+      )}
+    </div>
   );
 };
 

@@ -1,26 +1,372 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --foreground-rgb: 255, 255, 255;
+  --background-color: #151c2c;
+  --card-bg-color: #1a2235;
+  --positive-color: #2ebd85;
+  --negative-color: #ff5252;
+  --border-color: #2a3548;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground-rgb: 255, 255, 255;
+    --background-color: 10, 15, 30;
+    --background-end-rgb: 30, 40, 60;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+html, body {
+  height: 100%;
+  width: 100%;
+  color: white;
+  background-color: var(--background-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+#__next {
+  height: 100%;
+  width: 100%;
+}
+
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(45, 55, 72, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(74, 85, 104, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(74, 85, 104, 0.7);
+}
+
+/* Animation classes */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s infinite ease-in-out;
+}
+
+/* Trading platform card style */
+.trading-card {
+  background: rgb(19, 23, 34);
+  border: 1px solid rgba(45, 55, 72, 0.8);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin: 16px;
+}
+
+/* Price up/down colors */
+.price-up {
+  color: var(--positive-color);
+}
+
+.price-down {
+  color: var(--negative-color);
+}
+
+/* Trading platform header */
+.trading-header {
+  background: rgb(13, 17, 28);
+  border-bottom: 1px solid rgba(45, 55, 72, 0.8);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Trading platform button */
+.trading-button {
+  background: rgba(45, 55, 72, 0.5);
+  border: 1px solid rgba(74, 85, 104, 0.5);
+  border-radius: 4px;
+  color: rgb(var(--foreground-rgb));
+  padding: 4px 12px;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.trading-button:hover {
+  background: rgba(45, 55, 72, 0.8);
+}
+
+.trading-button.active {
+  background: rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.8);
+}
+
+/* Price tag styles */
+.price-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.price-tag.buy {
+  background: rgba(46, 189, 133, 0.2);
+  color: rgb(46, 189, 133);
+  border: 1px solid rgba(46, 189, 133, 0.3);
+}
+
+.price-tag.sell {
+  background: rgba(255, 82, 82, 0.2);
+  color: rgb(255, 82, 82);
+  border: 1px solid rgba(255, 82, 82, 0.3);
+}
+
+/* Glass effect for cards */
+.glass-effect {
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Calendar icon styles */
+.calendar-icon {
+  width: 60px;
+  height: 60px;
+  fill: white;
+  margin-bottom: 20px;
+}
+
+/* Time period buttons */
+.time-button {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(45, 55, 72, 0.8);
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 2px;
+  margin-right: 4px;
+  cursor: pointer;
+}
+
+.time-button.active {
+  background: rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.8);
+}
+
+/* Chart container */
+.chart-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+/* Chart placeholder */
+.chart-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(30, 41, 59, 0.3);
+  border-radius: 8px;
+  min-height: 150px;
+}
+
+/* N button */
+.n-button {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #1a2235;
+  border: 1px solid #2a3548;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  z-index: 10;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Navbar styles */
+.navbar {
+  background: rgb(13, 17, 28);
+  border-bottom: 1px solid rgba(45, 55, 72, 0.8);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Chart controls */
+.chart-controls {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+/* Chart type button */
+.chart-type-button {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(45, 55, 72, 0.8);
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.chart-type-button.active {
+  background: rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.8);
+}
+
+/* Price card styles */
+.price-card {
+  background-color: var(--card-bg-color);
+  border-left: 1px solid rgba(45, 55, 72, 0.8);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.price-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.price-value {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: baseline;
+}
+
+.price-unit {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-left: 8px;
+  font-weight: 400;
+}
+
+.price-change {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(var(--positive-color));
+  margin-bottom: 16px;
+}
+
+.price-change.negative {
+  color: rgb(var(--negative-color));
+}
+
+/* Main content container */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* Dashboard grid layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Dashboard card */
+.dashboard-card {
+  background-color: var(--card-bg-color);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Dashboard card header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(45, 55, 72, 0.5);
+  padding-bottom: 8px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+  .flex.h-screen {
+    flex-direction: column;
+  }
+  
+  .price-card {
+    width: 100% !important;
+    border-left: none;
+    border-top: 1px solid rgba(45, 55, 72, 0.8);
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
 }
