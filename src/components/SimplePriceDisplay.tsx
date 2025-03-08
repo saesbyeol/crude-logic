@@ -19,6 +19,8 @@ import {
   ChartTypeRegistry
 } from 'chart.js';
 import { Line, Bar } from 'react-chartjs-2';
+import GlobalSupplyDemand from './GlobalSupplyDemand';
+import FuturesOptionsData from './FuturesOptionsData';
 
 // Register ChartJS components
 ChartJS.register(
@@ -1132,6 +1134,22 @@ const SimplePriceDisplay = () => {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Futures & Options Data Section */}
+      <div style={{ marginTop: '2rem', marginBottom: '1rem' }}>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1.5rem' }}>
+          Futures & Options Data
+        </h2>
+        <FuturesOptionsData />
+      </div>
+
+      {/* Global Supply & Demand Indicators Section */}
+      <div style={{ marginTop: '2rem', marginBottom: '1rem' }}>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1.5rem' }}>
+          Global Supply & Demand Indicators
+        </h2>
+        <GlobalSupplyDemand />
       </div>
     </div>
   );
